@@ -6,7 +6,7 @@ package com.muskmelon.common.enums;
  * @date 2020-2-6 15:01
  * @since 1.0
  */
-public enum  ErrorCode {
+public enum ResultCode {
 
     /**
      * 成功
@@ -35,17 +35,17 @@ public enum  ErrorCode {
      */
     private String msg;
 
-    ErrorCode(int code, String msg) {
+    ResultCode(int code, String msg) {
         this.code = code;
         this.msg = msg;
     }
 
-    public static ErrorCode success(){
-        return ErrorCode.SUCCESS;
+    public static ResultCode success(){
+        return ResultCode.SUCCESS;
     }
 
-    public static ErrorCode systemError(){
-        return ErrorCode.SYSTEM_ERROR;
+    public static ResultCode error(){
+        return ResultCode.SYSTEM_ERROR;
     }
 
     public int getCode() {

@@ -1,6 +1,6 @@
 package com.muskmelon.common.action;
 
-import com.muskmelon.common.enums.ErrorCode;
+import com.muskmelon.common.enums.ResultCode;
 
 /**
  * @author muskmelon
@@ -15,8 +15,8 @@ public class ActionResult<T> {
     private T data;
 
     public ActionResult(){
-        this.code = ErrorCode.success().getCode();
-        this.msg = ErrorCode.success().getMsg();
+        this.code = ResultCode.success().getCode();
+        this.msg = ResultCode.success().getMsg();
     }
 
     public int getCode() {
