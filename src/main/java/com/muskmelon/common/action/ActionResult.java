@@ -14,9 +14,25 @@ public class ActionResult<T> {
     private String msg;
     private T data;
 
-    public ActionResult(){
+    public ActionResult() {
         this.code = ResultCode.success().getCode();
         this.msg = ResultCode.success().getMsg();
+    }
+
+    public void success(){
+
+    }
+
+    public void error(T data,ResultCode resultCode) {
+        this.code = resultCode.getCode();
+        this.msg = resultCode.getMsg();
+        this.data = data;
+    }
+
+    public void error(T data,ResultCode resultCode, String msg) {
+        this.code = resultCode.getCode();
+        this.msg = msg;
+        this.data = data;
     }
 
     public int getCode() {
