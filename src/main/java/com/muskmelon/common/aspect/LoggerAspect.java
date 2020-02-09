@@ -3,7 +3,7 @@ package com.muskmelon.common.aspect;
 import com.muskmelon.common.annotation.LoggerOperator;
 import com.muskmelon.common.util.JsonUtils;
 import com.muskmelon.modules.system.domain.OperatorLog;
-import com.muskmelon.modules.system.service.OperatorService;
+import com.muskmelon.modules.system.service.OperatorLogService;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.*;
 import org.aspectj.lang.reflect.MethodSignature;
@@ -38,7 +38,7 @@ public class LoggerAspect {
     private HttpServletRequest request;
 
     @Resource
-    private OperatorService operatorService;
+    private OperatorLogService operatorLogService;
 
     @Pointcut("@annotation(com.muskmelon.common.annotation.LoggerOperator)")
     public void controllerAspect() {
@@ -74,7 +74,7 @@ public class LoggerAspect {
             log.setParamFromMap(paramMap);
             log.setCostTime(Instant.now().toEpochMilli() - log.getCreateTime().getTime());
             log.setUserName("admin");
-            operatorService.addOperatorLog(log);
+            operatorLogService.addOperatorLog(log);
         }
 
     }
@@ -88,7 +88,7 @@ public class LoggerAspect {
         try {
             if (null != log) {
                 log.setResult(JsonUtils.object2Json(res));
-                operatorService.updateOperatorLog(log);
+                operatorLogService.updateOperatorLog(log);
             }
         } catch (Exception e) {
             logger.error("执行doAfterReturning发生异常", e);
@@ -109,7 +109,7 @@ public class LoggerAspect {
             if (null != log) {
                 log.setType("error");
                 log.setException(e.toString());
-                operatorService.updateOperatorLog(log);
+                operatorLogService.updateOperatorLog(log);
             }
         } catch (Exception e1) {
             logger.error("执行doAfterThrowing发生异常", e1);

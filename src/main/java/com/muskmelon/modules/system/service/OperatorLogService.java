@@ -10,7 +10,7 @@ import java.util.List;
  * @date 2020-2-9 20:16
  * @since 1.0
  */
-public interface OperatorService {
+public interface OperatorLogService {
 
     /**
      * 查询操作日志

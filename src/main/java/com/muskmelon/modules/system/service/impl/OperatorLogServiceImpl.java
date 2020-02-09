@@ -2,7 +2,7 @@ package com.muskmelon.modules.system.service.impl;
 
 import com.muskmelon.modules.system.dao.OperatorLogRepository;
 import com.muskmelon.modules.system.domain.OperatorLog;
-import com.muskmelon.modules.system.service.OperatorService;
+import com.muskmelon.modules.system.service.OperatorLogService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -15,7 +15,7 @@ import java.util.List;
  * @since 1.0
  */
 @Service("operatorService")
-public class OperatorServiceImpl implements OperatorService {
+public class OperatorLogServiceImpl implements OperatorLogService {
 
     @Resource
     private OperatorLogRepository operatorLogRepository;

@@ -2,7 +2,7 @@ package com.muskmelon.modules.system.controller;
 
 import com.muskmelon.common.action.ActionResult;
 import com.muskmelon.modules.system.domain.OperatorLog;
-import com.muskmelon.modules.system.service.OperatorService;
+import com.muskmelon.modules.system.service.OperatorLogService;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,12 +21,12 @@ import java.util.List;
 public class OperatorLogController {
 
     @Resource
-    private OperatorService operatorService;
+    private OperatorLogService operatorLogService;
 
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     public ActionResult<List<OperatorLog>> listOperatorLog() {
         ActionResult<List<OperatorLog>> result = new ActionResult<>();
-        result.setData(operatorService.listOperatorLog());
+        result.setData(operatorLogService.listOperatorLog());
         return result;
     }
 }
