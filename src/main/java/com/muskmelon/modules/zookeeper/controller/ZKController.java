@@ -1,6 +1,7 @@
 package com.muskmelon.modules.zookeeper.controller;
 
 import com.muskmelon.common.action.ActionResult;
+import com.muskmelon.common.annotation.LoggerOperator;
 import com.muskmelon.common.enums.ResultCode;
 import com.muskmelon.modules.zookeeper.service.ZKService;
 import org.apache.logging.log4j.util.Strings;
@@ -25,17 +26,28 @@ public class ZKController {
     @Resource
     private ZKService zkService;
 
+    @LoggerOperator(description = "连接zk服务")
     @RequestMapping(value = "/connect", method = RequestMethod.POST)
     public ActionResult<Boolean> connect(String connectString) {
         ActionResult<Boolean> result = new ActionResult<>();
-        result.setData(zkService.connect(connectString));
+        try {
+            result.setData(zkService.connect(connectString));
+        } catch (Exception e) {
+            result.error(false, ResultCode.ZK_CONNECT_ERROR, e.getMessage());
+        }
         return result;
     }
 
+    @LoggerOperator(description = "关闭zk服务")
     @RequestMapping(value = "/close", method = RequestMethod.POST)
     public ActionResult<Boolean> close() {
-        zkService.close();
-        return new ActionResult<>();
+        ActionResult<Boolean> result = new ActionResult<>();
+        try {
+            zkService.close();
+        } catch (Exception e) {
+            result.error(false, ResultCode.error(), e.getMessage());
+        }
+        return result;
     }
 
     @RequestMapping(value = "/listNodeChildren", method = RequestMethod.POST)
@@ -62,6 +74,7 @@ public class ZKController {
         return result;
     }
 
+    @LoggerOperator(description = "创建zk节点")
     @RequestMapping(value = "createNode", method = RequestMethod.POST)
     public ActionResult<Boolean> createNode(String path, String value) {
         ActionResult<Boolean> result = new ActionResult<>();
@@ -73,6 +86,7 @@ public class ZKController {
         return result;
     }
 
+    @LoggerOperator(description = "更新zk节点")
     @RequestMapping(value = "updateNode", method = RequestMethod.POST)
     public ActionResult<Boolean> updateNode(String path, String value) {
         ActionResult<Boolean> result = new ActionResult<>();
@@ -84,6 +98,7 @@ public class ZKController {
         return result;
     }
 
+    @LoggerOperator(description = "删除zk节点")
     @RequestMapping(value = "deleteNode", method = RequestMethod.POST)
     public ActionResult<Boolean> deleteNode(String path) {
         ActionResult<Boolean> result = new ActionResult<>();
