@@ -21,10 +21,12 @@ public enum ResultCode {
     /**
      * zk连接失败
      */
-    ZK_CONNECT_ERROR(10001,"zk连接失败");
+    ZK_CONNECT_ERROR(10001,"zookeeper服务连接失败"),
 
-
-
+    /**
+     * redis连接失败
+     */
+    REDIS_CONNECT_ERROR(20001,"redis服务连接失败");
     /**
      * 错误码
      */
