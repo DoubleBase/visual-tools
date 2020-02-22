@@ -137,4 +137,7 @@ public class RedisUtil {
         }
     }
 
+    public static Jedis getJedis() {
+        return jedis;
+    }
 }

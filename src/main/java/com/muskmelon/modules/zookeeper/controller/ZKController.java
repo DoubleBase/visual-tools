@@ -5,8 +5,10 @@ import com.muskmelon.common.annotation.LoggerOperator;
 import com.muskmelon.common.enums.ResultCode;
 import com.muskmelon.modules.zookeeper.service.ZKService;
 import org.apache.logging.log4j.util.Strings;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
@@ -19,15 +21,21 @@ import java.util.List;
  * @date 2020-2-6 14:02
  * @since 1.0
  */
-@RestController
+@Controller
 @RequestMapping("/zk")
 public class ZKController {
 
     @Resource
     private ZKService zkService;
 
+    @RequestMapping("/view")
+    public String view() {
+        return "/zookeeper/zookeeper.html";
+    }
+
     @LoggerOperator(description = "连接zk服务")
     @RequestMapping(value = "/connect", method = RequestMethod.POST)
+    @ResponseBody
     public ActionResult<Boolean> connect(String connectString) {
         ActionResult<Boolean> result = new ActionResult<>();
         try {
