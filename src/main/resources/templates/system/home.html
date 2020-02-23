@@ -8,13 +8,15 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>首页</title>
+    <title>可视化工具</title>
 
     <link href="/static/common/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/static/modules/system/css/home.css" rel="stylesheet">
+    <script src="/static/common/jquery/jquery-3.4.1.min.js"></script>
+    <script src="/static/common/bootstrap/js/bootstrap.min.js"></script>
 </head>
 
 <body>
-
 <nav class="navbar navbar-inverse navbar-fixed-top">
     <div class="container">
         <div class="navbar-header">
@@ -28,30 +30,20 @@
         </div>
         <div id="navbar" class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
-                <li class="active"><a href="#">首页</a></li>
-                <li><a href="#">zk管理</a></li>
-                <li><a href="#">操作日志</a></li>
+                <li id="homeTag" class="active"><a href="/home/view">首页</a></li>
+                <li id="zkTag"><a href="/zk/view">zk管理</a></li>
+                <li id="logTag"><a href="/operatorLog/view">操作日志</a></li>
             </ul>
         </div>
     </div>
 </nav>
-
 <div class="container">
-    <div id="tabContent">
-        <div id="home" style="padding-top: 80px;font-size: 22px;">
-            可视化管理界面
-        </div>
-        <div>
-            zk管理界面
-        </div>
-        <div>
-            操作管理界面
-        </div>
+    <div id="tabContent" class="container_view">
+        可视化管理界面
+
     </div>
 </div>
 
-<script src="/static/common/jquery/jquery-3.4.1.min.js"></script>
-<script src="/static/common/bootstrap/js/bootstrap.min.js"></script>
-<script src="/static/modules/system/home.js"></script>
+
 </body>
 </html>
