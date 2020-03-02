@@ -1,8 +1,13 @@
 package com.muskmelon.modules.system.service.impl;
 
+import com.muskmelon.common.page.PageDto;
+import com.muskmelon.common.page.PageInfo;
 import com.muskmelon.modules.system.dao.OperatorLogRepository;
 import com.muskmelon.modules.system.domain.OperatorLog;
 import com.muskmelon.modules.system.service.OperatorLogService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -21,8 +26,9 @@ public class OperatorLogServiceImpl implements OperatorLogService {
     private OperatorLogRepository operatorLogRepository;
 
     @Override
-    public List<OperatorLog> listOperatorLog() {
-        return operatorLogRepository.findAll();
+    public PageInfo<OperatorLog> listOperatorLog(PageDto pageDto) {
+        Page<OperatorLog> page = operatorLogRepository.findAll(PageRequest.of(pageDto.getOffset(), pageDto.getLimit()));
+        return new PageInfo<>(page.getTotalPages(), page.getContent());
     }
 
     @Override

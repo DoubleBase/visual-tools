@@ -1,6 +1,9 @@
 package com.muskmelon.modules.system.service;
 
+import com.muskmelon.common.page.PageDto;
+import com.muskmelon.common.page.PageInfo;
 import com.muskmelon.modules.system.domain.OperatorLog;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -13,10 +16,10 @@ import java.util.List;
 public interface OperatorLogService {
 
     /**
-     * 查询操作日志
+     * 分页查询操作日志
      * @return
      */
-    List<OperatorLog> listOperatorLog();
+    PageInfo<OperatorLog> listOperatorLog(PageDto pageDto);
 
     /**
      * 添加log
