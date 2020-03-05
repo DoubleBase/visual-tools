@@ -12,9 +12,9 @@ public class PageInfo<T> {
 
     private List<T> rows;
 
-    private Integer total;
+    private Long total;
 
-    public PageInfo(Integer total, List<T> rows) {
+    public PageInfo(Long total, List<T> rows) {
         this.total = total;
         this.rows = rows;
     }
@@ -27,11 +27,11 @@ public class PageInfo<T> {
         this.rows = rows;
     }
 
-    public Integer getTotal() {
+    public Long getTotal() {
         return total;
     }
 
-    public void setTotal(Integer total) {
+    public void setTotal(Long total) {
         this.total = total;
     }
 }

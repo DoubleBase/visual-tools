@@ -7,11 +7,9 @@ import com.muskmelon.modules.system.domain.OperatorLog;
 import com.muskmelon.modules.system.service.OperatorLogService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.List;
 
 /**
  * @author muskmelon
@@ -27,8 +25,8 @@ public class OperatorLogServiceImpl implements OperatorLogService {
 
     @Override
     public PageInfo<OperatorLog> listOperatorLog(PageDto pageDto) {
-        Page<OperatorLog> page = operatorLogRepository.findAll(PageRequest.of(pageDto.getOffset(), pageDto.getLimit()));
-        return new PageInfo<>(page.getTotalPages(), page.getContent());
+        Page<OperatorLog> page = operatorLogRepository.findAll(PageRequest.of(pageDto.getOffset()/pageDto.getLimit(), pageDto.getLimit()));
+        return new PageInfo<>(page.getTotalElements(), page.getContent());
     }
 
     @Override
