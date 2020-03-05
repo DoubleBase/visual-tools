@@ -11,9 +11,17 @@
     <title>可视化工具</title>
 
     <link href="/static/common/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/static/common/bootstrap/css/bootstrap-table.min.css" rel="stylesheet">
     <link href="/static/modules/system/css/home.css" rel="stylesheet">
+
     <script src="/static/common/jquery/jquery-3.4.1.min.js"></script>
     <script src="/static/common/bootstrap/js/bootstrap.min.js"></script>
+    <script src="/static/common/bootstrap/js/bootstrap-table.min.js"></script>
+    <script src="/static/common/bootstrap/js/bootstrap-table-zh-CN.min.js"></script>
+    <script src="/static/common/layui/layui.all.js"></script>
+    <script src="/static/common/bootstrap/js/bootstrap-treeview.js"></script>
+
+    <script src="/static/modules/zookeeper/js/zk.js"></script>
 </head>
 <body>
 <nav class="navbar navbar-inverse navbar-fixed-top">
@@ -43,11 +51,72 @@
         </ol>
         <div class="container-fluid">
             <div class="row">
-                <div class=""></div>
+                <div class="col-xs-6 col-md-4">
+                    <div id="toolbar">
+                        <div class="btn-group">
+                            <button class="btn btn-primary" id="btnAdd" title="新增" onclick="openAddDialog()">
+                                <i class="glyphicon glyphicon-plus"></i>
+                            </button>
+                            <button class="btn btn-info" id="btnUpdate" title="修改" onclick="openUpdateDialog()">
+                                <i class="glyphicon glyphicon-pencil"></i>
+                            </button>
+                            <button class="btn btn-danger" id="btnDelete" title="删除" onclick="deleteConnect()">
+                                <i class="glyphicon glyphicon-minus"></i>
+                            </button>
+                            <button class="btn btn-success" id="btnConnect" title="连接" onclick="connectZk()">
+                                <i class="glyphicon glyphicon-resize-small"></i>
+                            </button>
+                            <button class="btn btn-danger" id="btnClose" title="断开连接" onclick="closeZk()">
+                                <i class="glyphicon glyphicon-resize-full"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <table id="zkTable" class="table table-hover table-striped table-bordered " >
 
+                    </table>
+                </div>
+                <div class="col-xs-12 col-md-8">
+                    <div>
+                        当前连接：<span id="currentConnect"></span>
+                    </div>
+                    <div id="zkTree">
+
+
+                    </div>
+                </div>
             </div>
         </div>
 
+    </div>
+</div>
+<div class="modal fade" id="connectModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="connectTitle"></h4>
+            </div>
+            <div class="modal-body">
+                <form class="form">
+                    <div class="form-group" hidden="hidden">
+                        <label for="connectId">连接id</label>
+                        <input type="text" class="form-control" id="connectId" placeholder="输入连接Id">
+                    </div>
+                    <div class="form-group">
+                        <label for="connectName">连接名称</label>
+                        <input type="text" class="form-control" id="connectName" placeholder="输入连接名称">
+                    </div>
+                    <div class="form-group">
+                        <label for="connectInfo">连接信息</label>
+                        <input type="text" class="form-control" id="connectInfo" placeholder="输入连接信息（127.0.0.1:3306）">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-primary" id="btnSave" onclick="saveConnect()">保存</button>
+            </div>
+        </div>
     </div>
 </div>
 </body>

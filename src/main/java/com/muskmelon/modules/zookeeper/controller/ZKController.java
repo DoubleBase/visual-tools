@@ -48,6 +48,7 @@ public class ZKController {
 
     @LoggerOperator(description = "关闭zk服务")
     @RequestMapping(value = "/close", method = RequestMethod.POST)
+    @ResponseBody
     public ActionResult<Boolean> close() {
         ActionResult<Boolean> result = new ActionResult<>();
         try {
@@ -59,6 +60,7 @@ public class ZKController {
     }
 
     @RequestMapping(value = "/listNodeChildren", method = RequestMethod.POST)
+    @ResponseBody
     public ActionResult<List<String>> listNodeChildren(String path) {
         ActionResult<List<String>> result = new ActionResult<>();
         try {
@@ -71,6 +73,7 @@ public class ZKController {
     }
 
     @RequestMapping(value = "/getNodeValueByPath", method = RequestMethod.POST)
+    @ResponseBody
     public ActionResult<String> getNodeValueByPath(String path) {
         ActionResult<String> result = new ActionResult<>();
         try {
@@ -84,6 +87,7 @@ public class ZKController {
 
     @LoggerOperator(description = "创建zk节点")
     @RequestMapping(value = "createNode", method = RequestMethod.POST)
+    @ResponseBody
     public ActionResult<Boolean> createNode(String path, String value) {
         ActionResult<Boolean> result = new ActionResult<>();
         try {
@@ -96,6 +100,7 @@ public class ZKController {
 
     @LoggerOperator(description = "更新zk节点")
     @RequestMapping(value = "updateNode", method = RequestMethod.POST)
+    @ResponseBody
     public ActionResult<Boolean> updateNode(String path, String value) {
         ActionResult<Boolean> result = new ActionResult<>();
         try {
@@ -108,6 +113,7 @@ public class ZKController {
 
     @LoggerOperator(description = "删除zk节点")
     @RequestMapping(value = "deleteNode", method = RequestMethod.POST)
+    @ResponseBody
     public ActionResult<Boolean> deleteNode(String path) {
         ActionResult<Boolean> result = new ActionResult<>();
         try {
