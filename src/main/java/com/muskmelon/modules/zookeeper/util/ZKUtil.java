@@ -1,5 +1,6 @@
 package com.muskmelon.modules.zookeeper.util;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.framework.imps.CuratorFrameworkState;
@@ -8,6 +9,7 @@ import org.apache.logging.log4j.util.Strings;
 import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.ZooDefs;
 import org.apache.zookeeper.data.ACL;
+import org.apache.zookeeper.data.Stat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -132,9 +134,13 @@ public class ZKUtil {
     public static boolean updateNode(String path, String nodeValue) throws Exception {
         try {
             validate();
-            String oldValue = getNodeValueByPath(path);
-            curatorFramework.setData().forPath(path, nodeValue.getBytes());
-            logger.info("节点更新成功,nodePath={},oldValue={},value={}", path, oldValue, nodeValue);
+            if (StringUtils.isBlank(nodeValue)) {
+                curatorFramework.setData().forPath(path);
+            } else {
+                String oldValue = getNodeValueByPath(path);
+                curatorFramework.setData().forPath(path, nodeValue.getBytes());
+                logger.info("节点更新成功,nodePath={},oldValue={},value={}", path, oldValue, nodeValue);
+            }
             return true;
         } catch (Exception e) {
             int index = path.lastIndexOf("/") + 1;
@@ -154,7 +160,7 @@ public class ZKUtil {
         try {
             validate();
             curatorFramework.delete().forPath(path);
-            logger.error("删除节点path={}成功", path);
+            logger.info("删除节点path={}成功", path);
             return true;
         } catch (Exception e) {
             logger.error("删除节点path={}失败", path, e);
@@ -162,6 +168,26 @@ public class ZKUtil {
         }
     }
 
+    /**
+     * 校验节点是否存在
+     * @param path 路径
+     * @return
+     * @throws Exception
+     */
+    public static boolean checkExist(String path) throws Exception {
+        try {
+            validate();
+            Stat stat = curatorFramework.checkExists().forPath(path);
+            if (null == stat) {
+                logger.info("节点path={}不存在", path);
+                return false;
+            }
+            return true;
+        } catch (Exception e) {
+            logger.error("删除节点path={}失败", path, e);
+            throw e;
+        }
+    }
 
     public static void main(String[] args) throws Exception {
         String connectString = "127.0.0.1:2181";
@@ -172,6 +198,7 @@ public class ZKUtil {
 
         List<ACL> list = curatorFramework.getACL().forPath("/book/db");
         list.forEach(System.out::println);
+
 
         System.out.println(curatorFramework.getData().forPath("/book/db").toString());
         List<String> value = getNodeChildren("/");

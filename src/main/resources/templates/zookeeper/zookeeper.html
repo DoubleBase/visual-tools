@@ -12,6 +12,7 @@
 
     <link href="/static/common/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <link href="/static/common/bootstrap/css/bootstrap-table.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/static/common/ztree/css/zTreeStyle.css">
     <link href="/static/modules/system/css/home.css" rel="stylesheet">
 
     <script src="/static/common/jquery/jquery-3.4.1.min.js"></script>
@@ -19,7 +20,10 @@
     <script src="/static/common/bootstrap/js/bootstrap-table.min.js"></script>
     <script src="/static/common/bootstrap/js/bootstrap-table-zh-CN.min.js"></script>
     <script src="/static/common/layui/layui.all.js"></script>
-    <script src="/static/common/bootstrap/js/bootstrap-treeview.js"></script>
+    <!--<script src="/static/common/bootstrap/js/bootstrap-treeview.js"></script>-->
+    <script src="/static/common/ztree/js/jquery.ztree.core.min.js"></script>
+    <script src="/static/common/ztree/js/jquery.ztree.exedit.min.js"></script>
+    <script src="/static/common/ztree/js/jquery.ztree.excheck.min.js"></script>
 
     <script src="/static/modules/zookeeper/js/zk.js"></script>
 </head>
@@ -77,11 +81,7 @@
                 </div>
                 <div class="col-xs-12 col-md-8">
                     <div>
-                        当前连接：<span id="currentConnect"></span>
-                    </div>
-                    <div id="zkTree">
-
-
+                        <ul id="zkTree" class="ztree"></ul>
                     </div>
                 </div>
             </div>

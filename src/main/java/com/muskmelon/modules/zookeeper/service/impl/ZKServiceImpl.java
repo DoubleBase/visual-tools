@@ -1,9 +1,15 @@
 package com.muskmelon.modules.zookeeper.service.impl;
 
+import com.google.common.collect.Lists;
+import com.muskmelon.common.tree.Constants;
+import com.muskmelon.common.tree.TreeNode;
+import com.muskmelon.common.tree.TreeUtil;
 import com.muskmelon.modules.zookeeper.service.ZKService;
 import com.muskmelon.modules.zookeeper.util.ZKUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -26,8 +32,20 @@ public class ZKServiceImpl implements ZKService {
     }
 
     @Override
-    public List<String> listNodeChildren(String path) throws Exception {
-        return ZKUtil.getNodeChildren(path);
+    public List<TreeNode> listNodeChildren(String pathName) throws Exception {
+        List<TreeNode> treeNodes = Lists.newArrayList();
+        if (StringUtils.isBlank(pathName)) {
+            return Collections.singletonList(TreeUtil.getRootNode());
+        }
+        List<String> nodes = ZKUtil.getNodeChildren(pathName);
+        nodes.forEach(node -> {
+            TreeNode treeNode = new TreeNode();
+            treeNode.setName(node);
+            treeNode.setOpen(false);
+            treeNode.setPathName(TreeUtil.getPath(pathName, node));
+            treeNodes.add(treeNode);
+        });
+        return treeNodes;
     }
 
     @Override
@@ -36,13 +54,34 @@ public class ZKServiceImpl implements ZKService {
     }
 
     @Override
-    public boolean createNode(String path, String createNode) throws Exception {
-        return ZKUtil.createNode(path, createNode);
+    public TreeNode createNode(String path, String nodeValue) throws Exception {
+        TreeNode treeNode = new TreeNode();
+        boolean flag = ZKUtil.createNode(path, nodeValue);
+        if (flag) {
+            treeNode.setName(TreeUtil.getNameFromPath(path));
+            treeNode.setPathName(path);
+            treeNode.setOpen(false);
+            return treeNode;
+        } else {
+            return null;
+        }
     }
 
     @Override
     public boolean updateNode(String path, String nodeValue) throws Exception {
-        return ZKUtil.updateNode(path,nodeValue);
+        return ZKUtil.updateNode(path, nodeValue);
+    }
+
+    @Override
+    public boolean updateNodePath(String oldPath, String newPath) throws Exception {
+        if (!ZKUtil.checkExist(newPath)) {
+            // 新路径不存在,删除老路径,创建新路径
+            String value = getNodeValueByPath(oldPath);
+            ZKUtil.deleteNode(oldPath);
+            ZKUtil.createNode(newPath, value);
+            return true;
+        }
+        return false;
     }
 
     @Override

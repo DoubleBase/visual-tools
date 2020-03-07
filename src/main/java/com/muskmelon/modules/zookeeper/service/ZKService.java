@@ -1,5 +1,7 @@
 package com.muskmelon.modules.zookeeper.service;
 
+import com.muskmelon.common.tree.TreeNode;
+
 import java.util.List;
 
 /**
@@ -23,11 +25,11 @@ public interface ZKService {
 
     /**
      * 查询节点下的子节点
-     * @param path 节点路径
+     * @param pathName 节点路径
      * @return 节点下的子节点名称
      * @throws Exception 抛出异常
      */
-    List<String> listNodeChildren(String path) throws Exception;
+    List<TreeNode> listNodeChildren(String pathName) throws Exception;
 
     /**
      * 查询节点对应的值
@@ -40,9 +42,9 @@ public interface ZKService {
      * 创建zk节点
      * @param path 节点所在路径
      * @param nodeValue 节点value
-     * @return 是否创建成功
+     * @return 创建成功的节点
      */
-    boolean createNode(String path,String nodeValue) throws Exception;
+    TreeNode createNode(String path,String nodeValue) throws Exception;
 
     /**
      * 更新zk节点
@@ -52,6 +54,13 @@ public interface ZKService {
      */
     boolean updateNode(String path,String nodeValue) throws Exception;
 
+    /**
+     * 更新zk节点path
+     * @param oldPath 老路径
+     * @param newPath 新路径
+     * @return
+     */
+    boolean updateNodePath(String oldPath, String newPath) throws Exception;
     /**
      * 删除zk节点
      * @param path 节点路径

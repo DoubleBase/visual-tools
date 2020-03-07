@@ -1,5 +1,4 @@
 var flag = 'add';
-var rootPath = "/";
 $(function () {
 
     // 初始化表格
@@ -221,24 +220,131 @@ closeZk = function () {
     });
 };
 initTree = function () {
-    $.ajax({
-        url: '/zk/listNodeChildren',
-        type: 'POST',
-        dataType: 'json',
-        data: {
-            path: rootPath
+    var setting = {
+        async: {
+            url: '/zk/listNodeChildren',
+            type: 'post',
+            dataType: 'text',
+            enable: true,
+            autoParam: ["pathName"],
+            dataFilter: function (treeId, parentNode, responseData) {
+                if (responseData.code === 0) {
+                    return responseData.data;
+                }
+            }
         },
-        success: function (res) {
-            console.log(res);
-            if (res.code === 0) {
-                /*$("#zkTree").treeview({
-                    data:[{
-                        text:"Node 1"
-                    }]
-                })*/
+        view: {
+            expandSpeed: "",
+            addHoverDom: addHoverDom,
+            removeHoverDom: removeHoverDom,
+            selectedMulti: false
+        },
+        edit: {
+            enable: true
+        },
+        callback: {
+            beforeRemove: function (treeId, treeNode) {
+                var zTree = $.fn.zTree.getZTreeObj(treeId);
+                zTree.selectNode(treeNode);
+                return confirm("确认删除 节点 -- " + treeNode.name + " 吗？");
+            },
+            beforeRename: function (treeId, treeNode, newName, isCancel) {
+                if (!isCancel) {
+                    var path = treeNode.pathName;
+                    var index = path.lastIndexOf("/");
+                    var newPath = path.substr(0, index) + "/" + newName;
+                    $.ajax({
+                        url: '/zk/updateNodePath',
+                        type: 'POST',
+                        dataType: 'json',
+                        data: {
+                            oldPath: treeNode.pathName,
+                            newPath: newPath
+                        },
+                        success: function (res) {
+                            if (res.code === 0 && res.data === true) {
+                                layer.msg('节点名称更新成功');
+                            }
+                        }
+                    })
+                }
+            },
+            onAsyncSuccess: function (event, treeId, treeNode, msg) {
+                var obj = JSON.parse(msg);
+                if (obj.data.length === 0) {
+                    treeNode.isParent = false;
+                    var treeObj = $.fn.zTree.getZTreeObj(treeId);
+                    treeObj.updateNode(treeNode);
+                }
+            },
+            onRemove: function (event, treeId, treeNode) {
+                $.ajax({
+                    url: '/zk/deleteNode',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: {
+                        path: treeNode.pathName
+                    },
+                    success: function (res) {
+                        if (res.code === 0) {
+                            layer.msg('删除节点' + treeNode.name + '成功');
+                        } else {
+                            layer.msg('删除节点' + treeNode.name + '失败');
+                            var treeObj = $.fn.zTree.getZTreeObj(treeId);
+                            treeObj.reAsyncChildNodes(treeNode.getParentNode(), "refresh");
+                        }
+
+                    }
+                })
+            },
+            onClick: function (event, treeId, treeNode) {
+                if (treeNode.children === null) {
+                    var treeObj = $.fn.zTree.getZTreeObj(treeId);
+                    treeNode.isParent = true;
+                    if (treeNode.name === "/") {
+                        treeObj.reAsyncChildNodes(treeNode);
+                    } else {
+                        treeObj.reAsyncChildNodes(treeNode, "refresh");
+                    }
+
+                }
             }
         }
-    })
+    };
 
+    function addHoverDom(treeId, treeNode) {
+        var sObj = $("#" + treeNode.tId + "_span");
+        if (treeNode.editNameFlag || $("#addBtn_" + treeNode.tId).length > 0) return;
+        var addStr = "<span class='button add' id='addBtn_" + treeNode.tId
+            + "' title='add node' onfocus='this.blur();'></span>";
+        sObj.after(addStr);
+        var btn = $("#addBtn_" + treeNode.tId);
+        if (btn) btn.bind("click", function () {
+            console.log(treeNode);
+            $.ajax({
+                url: '/zk/createNode',
+                type: 'POST',
+                dataType: 'json',
+                data: {
+                    path: treeNode.pathName + "/new node",
+                    value: ''
+                },
+                success: function (res) {
+                    if (res.code === 0) {
+                        var treeObj = $.fn.zTree.getZTreeObj(treeId);
+                        treeObj.addNodes(treeNode, treeObj.transformToArray(res.data));
+                    }
+                }
+            });
+            return false;
+        });
+    }
+
+    function removeHoverDom(treeId, treeNode) {
+        $("#addBtn_" + treeNode.tId).unbind().remove();
+        return false;
+    }
+
+    $.fn.zTree.init($("#zkTree"), setting, null);
 
 };

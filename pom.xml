@@ -166,6 +166,8 @@
                     <include>**/*.woff</include>
                     <include>**/*.woff2*</include>
                     <include>**/*.ttf</include>
+                    <include>**/*.png</include>
+                    <include>**/*.gif</include>
                 </includes>
                 <filtering>false</filtering>
             </resource>
