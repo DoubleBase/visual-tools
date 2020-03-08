@@ -1,6 +1,7 @@
 package com.muskmelon.modules.zookeeper.service;
 
 import com.muskmelon.common.tree.TreeNode;
+import com.muskmelon.modules.zookeeper.vo.ZKNode;
 
 import java.util.List;
 
@@ -37,6 +38,8 @@ public interface ZKService {
      * @return 节点值
      */
     String getNodeValueByPath(String path);
+
+    ZKNode getNodeInfoByPath(String path) throws Exception;
 
     /**
      * 创建zk节点

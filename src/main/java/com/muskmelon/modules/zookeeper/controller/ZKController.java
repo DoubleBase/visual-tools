@@ -2,9 +2,12 @@ package com.muskmelon.modules.zookeeper.controller;
 
 import com.muskmelon.common.action.ActionResult;
 import com.muskmelon.common.annotation.LoggerOperator;
+import com.muskmelon.common.cache.ZkCacheManager;
 import com.muskmelon.common.enums.ResultCode;
 import com.muskmelon.common.tree.TreeNode;
 import com.muskmelon.modules.zookeeper.service.ZKService;
+import com.muskmelon.modules.zookeeper.vo.ZKNode;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +22,7 @@ import java.util.List;
  * @date 2020-2-6 14:02
  * @since 1.0
  */
+@Slf4j
 @Controller
 @RequestMapping("/zk")
 public class ZKController {
@@ -31,13 +35,31 @@ public class ZKController {
         return "/zookeeper/zookeeper.html";
     }
 
+    /**
+     * 获取已连接的连接信息
+     * @return
+     */
+    @RequestMapping(value = "/getConnection", method = RequestMethod.GET)
+    @ResponseBody
+    public ActionResult<String> getConnection(){
+        ActionResult<String> result = new ActionResult<>();
+        result.setData(ZkCacheManager.getConnectionCache());
+        return result;
+    }
+
     @LoggerOperator(description = "连接zk服务")
     @RequestMapping(value = "/connect", method = RequestMethod.POST)
     @ResponseBody
     public ActionResult<Boolean> connect(String connectString) {
         ActionResult<Boolean> result = new ActionResult<>();
         try {
-            result.setData(zkService.connect(connectString));
+            if (ZkCacheManager.checkExist(connectString)) {
+                log.info("【{}】已连接", connectString);
+                result.setData(true);
+            } else {
+                result.setData(zkService.connect(connectString));
+                ZkCacheManager.addCache(connectString);
+            }
         } catch (Exception e) {
             result.error(false, ResultCode.ZK_CONNECT_ERROR, e.getMessage());
         }
@@ -51,6 +73,7 @@ public class ZKController {
         ActionResult<Boolean> result = new ActionResult<>();
         try {
             zkService.close();
+            ZkCacheManager.removeCache();
         } catch (Exception e) {
             result.error(false, ResultCode.error(), e.getMessage());
         }
@@ -79,6 +102,19 @@ public class ZKController {
             result.setData(value);
         } catch (Exception e) {
             result.error(Strings.EMPTY, ResultCode.error(), e.getMessage());
+        }
+        return result;
+    }
+
+    @RequestMapping(value = "/getNodeInfoByPath", method = RequestMethod.POST)
+    @ResponseBody
+    public ActionResult<ZKNode> getNodeInfoByPath(String path) {
+        ActionResult<ZKNode> result = new ActionResult<>();
+        try {
+            ZKNode node = zkService.getNodeInfoByPath(path);
+            result.setData(node);
+        } catch (Exception e) {
+            result.error(null, ResultCode.error(), e.getMessage());
         }
         return result;
     }

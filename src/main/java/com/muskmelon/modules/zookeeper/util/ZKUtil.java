@@ -8,7 +8,6 @@ import org.apache.curator.retry.ExponentialBackoffRetry;
 import org.apache.logging.log4j.util.Strings;
 import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.ZooDefs;
-import org.apache.zookeeper.data.ACL;
 import org.apache.zookeeper.data.Stat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,12 +40,17 @@ public class ZKUtil {
     public static boolean connect(String connectString) {
         logger.info("******连接zk服务******");
         logger.info("连接信息：{}", connectString);
-        curatorFramework = CuratorFrameworkFactory.newClient(connectString, retry);
-        curatorFramework.start();
-        if (CuratorFrameworkState.STARTED.equals(curatorFramework.getState())) {
-            logger.info("连接服务成功,连接信息：{}", connectString);
-            return true;
-        } else {
+        try {
+            curatorFramework = CuratorFrameworkFactory.newClient(connectString, retry);
+            curatorFramework.start();
+            if (CuratorFrameworkState.STARTED.equals(curatorFramework.getState())) {
+                logger.info("连接服务成功,连接信息：{}", connectString);
+                return true;
+            } else {
+                return false;
+            }
+        } catch (Exception e) {
+            logger.error("连接失败,检查连接信息是否正确", e);
             return false;
         }
     }
@@ -76,6 +80,9 @@ public class ZKUtil {
     public static String getNodeValueByPath(String path) {
         try {
             byte[] value = curatorFramework.getData().forPath(path);
+            if (null == value) {
+                return Strings.EMPTY;
+            }
             return new String(value);
         } catch (Exception e) {
             logger.error("查找节点的值失败,path={}", path, e);
@@ -170,6 +177,7 @@ public class ZKUtil {
 
     /**
      * 校验节点是否存在
+     *
      * @param path 路径
      * @return
      * @throws Exception
@@ -177,7 +185,7 @@ public class ZKUtil {
     public static boolean checkExist(String path) throws Exception {
         try {
             validate();
-            Stat stat = curatorFramework.checkExists().forPath(path);
+            Stat stat = getNodeStat(path);
             if (null == stat) {
                 logger.info("节点path={}不存在", path);
                 return false;
@@ -189,22 +197,15 @@ public class ZKUtil {
         }
     }
 
-    public static void main(String[] args) throws Exception {
-        String connectString = "127.0.0.1:2181";
-
-        connect(connectString);
-
-//        updateNode("/book/db", "oracle");
-
-        List<ACL> list = curatorFramework.getACL().forPath("/book/db");
-        list.forEach(System.out::println);
-
-
-        System.out.println(curatorFramework.getData().forPath("/book/db").toString());
-        List<String> value = getNodeChildren("/");
-        value.forEach(System.out::println);
-        close();
+    /**
+     * 获取节点信息
+     *
+     * @param path
+     * @return
+     * @throws Exception
+     */
+    public static Stat getNodeStat(String path) throws Exception {
+        return curatorFramework.checkExists().forPath(path);
     }
-
 
 }

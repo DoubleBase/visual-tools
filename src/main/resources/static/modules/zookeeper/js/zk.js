@@ -1,13 +1,35 @@
 var flag = 'add';
+var ipPatten = /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\:([0-9]|[1-9]\d{1,3}|[1-5]\d{4}|6[0-5]{2}[0-3][0-5])$/;
+
 $(function () {
 
     // 初始化表格
     initTable();
 
-    initTree();
-
+    loadConnection();
 });
+loadConnection = function () {
+    $.ajax({
+        url: '/zk/getConnection',
+        type: 'GET',
+        dataType: 'json',
+        success: function (res) {
+            if (res.code === 0) {
+                setConnectInfo(res.data);
+            }
+        }
+    });
+};
 
+setConnectInfo = function (info) {
+    if ("无" !== info) {
+        initTree();
+    }
+    $("#currentConnect").html("当前连接：" + info);
+};
+/**
+ * 初始化连接表
+ */
 initTable = function () {
     $("#zkTable").bootstrapTable({
         url: "/connect/list",
@@ -51,13 +73,20 @@ initTable = function () {
     })
 };
 
+/**
+ * 获取参数
+ * @param params
+ * @returns {{offset: *, limit: (*|number)}}
+ */
 getParams = function (params) {
     return {
         offset: params.offset,
         limit: params.limit
     }
 };
-
+/**
+ * 保存连接
+ */
 saveConnect = function () {
     if (flag === 'add') {
         addConnect();
@@ -68,6 +97,9 @@ saveConnect = function () {
     $("#connectModal").modal('hide');
 
 };
+/**
+ * 打开新增连接窗口
+ */
 openAddDialog = function () {
     $("#connectModal").modal('show')
     $("#connectTitle").text("新增连接");
@@ -76,7 +108,9 @@ openAddDialog = function () {
     $("#connectName").val("");
     $("#connectInfo").val("");
 };
-
+/**
+ * 打开更新连接窗口
+ */
 openUpdateDialog = function () {
     $("#connectTitle").text("修改连接");
     flag = 'update';
@@ -91,10 +125,16 @@ openUpdateDialog = function () {
     $("#connectInfo").val(row[0].info);
     $("#connectModal").modal('show')
 };
-
+/**
+ * 新增连接
+ */
 addConnect = function () {
     var name = $("#connectName").val();
     var info = $("#connectInfo").val();
+    if(!ipPatten.test(info)){
+        layer.msg("连接信息输入不正确,请重新输入");
+        return;
+    }
     $.ajax({
         url: '/connect/add',
         type: 'POST',
@@ -116,13 +156,18 @@ addConnect = function () {
         }
     })
 };
-
+/**
+ * 修改连接
+ */
 updateConnect = function () {
     // 选择表格数据
     var name = $("#connectName").val();
     var info = $("#connectInfo").val();
     var id = $("#connectId").val();
-
+    if(!ipPatten.test(info)){
+        layer.msg("连接信息输入不正确,请重新输入");
+        return;
+    }
     $.ajax({
         url: '/connect/update',
         type: 'POST',
@@ -143,7 +188,9 @@ updateConnect = function () {
         }
     })
 };
-
+/**
+ * 删除连接
+ */
 deleteConnect = function () {
     var row = $("#zkTable").bootstrapTable('getSelections');
     if (row.length === 0) {
@@ -172,10 +219,15 @@ deleteConnect = function () {
         layer.close(index);
     });
 };
+/**
+ * 刷新表格
+ */
 refreshTable = function () {
     $("#zkTable").bootstrapTable("refresh");
 };
-
+/**
+ * 连接zk
+ */
 connectZk = function () {
     var row = $("#zkTable").bootstrapTable('getSelections');
     if (row.length === 0) {
@@ -192,6 +244,8 @@ connectZk = function () {
         success: function (res) {
             if (res.code === 0) {
                 layer.msg('连接成功');
+                setConnectInfo(row[0].info);
+
             }
         },
         error: function () {
@@ -199,6 +253,9 @@ connectZk = function () {
         }
     });
 };
+/**
+ * 关闭zk
+ */
 closeZk = function () {
     var row = $("#zkTable").bootstrapTable('getSelections');
     if (row.length === 0) {
@@ -212,6 +269,9 @@ closeZk = function () {
         success: function (res) {
             if (res.code === 0) {
                 layer.msg('关闭连接成功');
+                var treeObj = $.fn.zTree.getZTreeObj("zkTree");
+                treeObj.destroy();
+                setConnectInfo("无")
             }
         },
         error: function () {
@@ -219,6 +279,10 @@ closeZk = function () {
         }
     });
 };
+/**************************************zk树操作*****************************/
+/**
+ * 初始化树
+ */
 initTree = function () {
     var setting = {
         async: {
@@ -308,6 +372,7 @@ initTree = function () {
                     }
 
                 }
+                getNodeProperties(treeNode.pathName);
             }
         }
     };
@@ -320,7 +385,6 @@ initTree = function () {
         sObj.after(addStr);
         var btn = $("#addBtn_" + treeNode.tId);
         if (btn) btn.bind("click", function () {
-            console.log(treeNode);
             $.ajax({
                 url: '/zk/createNode',
                 type: 'POST',
@@ -347,4 +411,52 @@ initTree = function () {
 
     $.fn.zTree.init($("#zkTree"), setting, null);
 
+};
+
+getNodeProperties = function (path) {
+    $.ajax({
+        url: '/zk/getNodeInfoByPath',
+        type: 'POST',
+        dataType: 'json',
+        data: {
+            path: path
+        },
+        success: function (res) {
+            if (res.code === 0) {
+                var node = res.data;
+                $("#nodeValue").val(node.nodeValue);
+                $("#czxid").val(node.czxid);
+                $("#mzxid").val(node.mzxid);
+                $("#ctime").val(node.ctime);
+                $("#mtime").val(node.mtime);
+                $("#version").val(node.version);
+                $("#cversion").val(node.cversion);
+                $("#aversion").val(node.aversion);
+                $("#ephemeralOwner").val(node.ephemeralOwner);
+                $("#dataLength").val(node.dataLength);
+                $("#numChildren").val(node.numChildren);
+                $("#pzxid").val(node.pzxid);
+            }
+        }
+    })
+};
+
+updateNodeValue = function () {
+    var treeObj = $.fn.zTree.getZTreeObj("zkTree");
+    var path = treeObj.getSelectedNodes()[0].pathName;
+    var value = $("#nodeValue").val();
+    $.ajax({
+        url: '/zk/updateNode',
+        type: 'POST',
+        dataType: 'json',
+        data: {
+            path: path,
+            value: value
+        },
+        success: function (res) {
+            if (res.code === 0) {
+                layer.msg("节点值更新成功");
+            }
+        }
+    })
 };

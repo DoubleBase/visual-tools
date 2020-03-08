@@ -1,12 +1,13 @@
 package com.muskmelon.modules.zookeeper.service.impl;
 
 import com.google.common.collect.Lists;
-import com.muskmelon.common.tree.Constants;
 import com.muskmelon.common.tree.TreeNode;
 import com.muskmelon.common.tree.TreeUtil;
 import com.muskmelon.modules.zookeeper.service.ZKService;
 import com.muskmelon.modules.zookeeper.util.ZKUtil;
+import com.muskmelon.modules.zookeeper.vo.ZKNode;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.zookeeper.data.Stat;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -51,6 +52,27 @@ public class ZKServiceImpl implements ZKService {
     @Override
     public String getNodeValueByPath(String path) {
         return ZKUtil.getNodeValueByPath(path);
+    }
+
+    @Override
+    public ZKNode getNodeInfoByPath(String path) throws Exception {
+        ZKNode zkNode = new ZKNode();
+        Stat stat = ZKUtil.getNodeStat(path);
+        if (null != stat) {
+            zkNode.setNodeValue(getNodeValueByPath(path));
+            zkNode.setCzxid(stat.getCzxid());
+            zkNode.setMzxid(stat.getMzxid());
+            zkNode.setCtime(stat.getCtime());
+            zkNode.setMtime(stat.getMtime());
+            zkNode.setVersion(stat.getVersion());
+            zkNode.setCversion(stat.getCversion());
+            zkNode.setAversion(stat.getAversion());
+            zkNode.setEphemeralOwner(stat.getEphemeralOwner());
+            zkNode.setDataLength(stat.getDataLength());
+            zkNode.setNumChildren(stat.getNumChildren());
+            zkNode.setPzxid(stat.getPzxid());
+        }
+        return zkNode;
     }
 
     @Override

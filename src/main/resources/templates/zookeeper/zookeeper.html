@@ -54,7 +54,7 @@
             <li><a href="#">zk管理</a></li>
         </ol>
         <div class="container-fluid">
-            <div class="row">
+            <div class="row" style="height: 500px;">
                 <div class="col-xs-6 col-md-4">
                     <div id="toolbar">
                         <div class="btn-group">
@@ -79,10 +79,64 @@
 
                     </table>
                 </div>
-                <div class="col-xs-12 col-md-8">
+                <div class="col-xs-6 col-md-4">
+                    <p id="currentConnect" style="color: #FD482C;"></p>
                     <div>
                         <ul id="zkTree" class="ztree"></ul>
                     </div>
+                </div>
+                <div class="col-xs-6 col-md-4">
+                    <form>
+                        <button type="button" class="btn btn-primary" onclick="updateNodeValue()">更新</button>
+                        <div class="form-group">
+                            <label for="nodeValue">节点值：</label>
+                            <input type="text" class="form-control" id="nodeValue">
+                        </div>
+                        <div class="form-group">
+                            <label for="czxid">czxid：</label>
+                            <input type="text" class="form-control" readonly="readonly" id="czxid">
+                        </div>
+                        <div class="form-group">
+                            <label for="mzxid">mzxid：</label>
+                            <input type="text" class="form-control" readonly="readonly" id="mzxid">
+                        </div>
+                        <div class="form-group">
+                            <label for="ctime">ctime：</label>
+                            <input type="text" class="form-control" readonly="readonly" id="ctime">
+                        </div>
+                        <div class="form-group">
+                            <label for="mtime">mtime：</label>
+                            <input type="text" class="form-control" readonly="readonly" id="mtime">
+                        </div>
+                        <div class="form-group">
+                            <label for="version">version：</label>
+                            <input type="text" class="form-control" readonly="readonly" id="version">
+                        </div>
+                        <div class="form-group">
+                            <label for="cversion">cversion：</label>
+                            <input type="text" class="form-control" readonly="readonly" id="cversion">
+                        </div>
+                        <div class="form-group">
+                            <label for="aversion">aversion：</label>
+                            <input type="text" class="form-control" readonly="readonly" id="aversion">
+                        </div>
+                        <div class="form-group">
+                            <label for="ephemeralOwner">ephemeralOwner：</label>
+                            <input type="text" class="form-control" readonly="readonly" id="ephemeralOwner">
+                        </div>
+                        <div class="form-group">
+                            <label for="dataLength">dataLength：</label>
+                            <input type="text" class="form-control" readonly="readonly" id="dataLength">
+                        </div>
+                        <div class="form-group">
+                            <label for="numChildren">numChildren：</label>
+                            <input type="text" class="form-control" readonly="readonly" id="numChildren">
+                        </div>
+                        <div class="form-group">
+                            <label for="pzxid">pzxid：</label>
+                            <input type="text" class="form-control" readonly="readonly" id="pzxid">
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
