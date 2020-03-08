@@ -131,7 +131,7 @@ openUpdateDialog = function () {
 addConnect = function () {
     var name = $("#connectName").val();
     var info = $("#connectInfo").val();
-    if(!ipPatten.test(info)){
+    if (!ipPatten.test(info)) {
         layer.msg("连接信息输入不正确,请重新输入");
         return;
     }
@@ -164,7 +164,7 @@ updateConnect = function () {
     var name = $("#connectName").val();
     var info = $("#connectInfo").val();
     var id = $("#connectId").val();
-    if(!ipPatten.test(info)){
+    if (!ipPatten.test(info)) {
         layer.msg("连接信息输入不正确,请重新输入");
         return;
     }
@@ -328,6 +328,8 @@ initTree = function () {
                         success: function (res) {
                             if (res.code === 0 && res.data === true) {
                                 layer.msg('节点名称更新成功');
+                                var treeObj = $.fn.zTree.getZTreeObj(treeId);
+                                treeObj.reAsyncChildNodes(treeNode.getParentNode(), "refresh");
                             }
                         }
                     })
@@ -456,6 +458,8 @@ updateNodeValue = function () {
         success: function (res) {
             if (res.code === 0) {
                 layer.msg("节点值更新成功");
+            } else {
+                layer.msg("节点值更新失败！！");
             }
         }
     })
